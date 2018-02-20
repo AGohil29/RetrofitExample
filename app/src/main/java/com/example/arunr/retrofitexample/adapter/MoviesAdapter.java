@@ -1,6 +1,7 @@
 package com.example.arunr.retrofitexample.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.icu.text.IDNA;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -10,8 +11,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.arunr.retrofitexample.R;
+import com.example.arunr.retrofitexample.activity.MovieDetails;
 import com.example.arunr.retrofitexample.model.Movie;
 import com.squareup.picasso.Picasso;
 
@@ -31,7 +34,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     private int rowLayout;
     private Context context;
 
-    public static class MovieViewHolder extends RecyclerView.ViewHolder {
+    public class MovieViewHolder extends RecyclerView.ViewHolder {
         LinearLayout moviesLayout;
         ImageView imageView;
         TextView movieTitle;
@@ -47,6 +50,23 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
             data = view.findViewById(R.id.subtitle);
             movieDescription = view.findViewById(R.id.description);
             rating = view.findViewById(R.id.rating);
+
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int pos = getAdapterPosition();
+                    if (pos != RecyclerView.NO_POSITION){
+                        Movie clickedDataItem = movies.get(pos);
+                        Intent intent = new Intent(context, MovieDetails.class);
+                        intent.putExtra("poster_path", IMAGE_URL_BASE_URL + movies.get(pos).getPosterPath());
+                        intent.putExtra("original_title", movies.get(pos).getOriginalTitle());
+                        intent.putExtra("overview", movies.get(pos).getOverview());
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(intent);
+                        Toast.makeText(v.getContext(), "You clicked " + clickedDataItem.getOriginalTitle(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         }
     }
 
