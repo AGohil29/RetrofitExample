@@ -2,6 +2,7 @@ package com.example.arunr.retrofitexample.activity;
 // API Key - 7810be993cb7181164909940ba06cca9
 // Url - https://api.themoviedb.org/3/movie/550?api_key=7810be993cb7181164909940ba06cca9
 
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -38,6 +39,9 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        // Use of Swipe to Refresh
+        final SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipe_view);
+
         final RecyclerView recyclerView = findViewById(R.id.movies_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -56,6 +60,15 @@ public class MainActivity extends AppCompatActivity {
             public void onFailure(Call<MovieResponse> call, Throwable t) {
                 // Log error here since request failed
                 Log.e(TAG, t.toString());
+            }
+        });
+
+        // define any task which you want to perform after refresh
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Define your work here
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
     }
