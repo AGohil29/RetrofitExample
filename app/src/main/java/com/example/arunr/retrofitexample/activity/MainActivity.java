@@ -18,6 +18,7 @@ import com.example.arunr.retrofitexample.rest.ApiClient;
 import com.example.arunr.retrofitexample.rest.ApiInterface;
 
 import java.util.List;
+import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO - insert your themoviedb.org API KEY here
     private final static String API_KEY = "7810be993cb7181164909940ba06cca9";
+    private List<Movie> movies;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
                 List<Movie> movies = response.body().getResults();
-                recyclerView.setAdapter(new MoviesAdapter(movies, R.layout.list_item_movie, getApplicationContext()));
+                recyclerView.setAdapter(new MoviesAdapter(movies, R.layout.list_item_movie, getApplicationContext(), swipeRefreshLayout));
                 Log.d(TAG, "Number of movies received: " + movies.size());
             }
 
@@ -62,14 +64,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.e(TAG, t.toString());
             }
         });
-
-        // define any task which you want to perform after refresh
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                // Define your work here
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
+        // set colors to swipe refresh layout
+        swipeRefreshLayout.setColorSchemeResources(R.color.orange);
     }
 }

@@ -1,8 +1,10 @@
 package com.example.arunr.retrofitexample.adapter;
 
 import android.content.Context;
+import android.os.Handler;
 import android.content.Intent;
 import android.icu.text.IDNA;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,6 +21,7 @@ import com.example.arunr.retrofitexample.model.Movie;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Random;
 
 import retrofit2.http.Query;
 
@@ -33,6 +36,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     private List<Movie> movies;
     private int rowLayout;
     private Context context;
+    private SwipeRefreshLayout swipeRefreshLayout;
+
 
     public class MovieViewHolder extends RecyclerView.ViewHolder {
         LinearLayout moviesLayout;
@@ -70,10 +75,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         }
     }
 
-    public MoviesAdapter(List<Movie> movies, int rowLayout, Context context){
+    public MoviesAdapter(List<Movie> movies, int rowLayout, Context context, SwipeRefreshLayout swipeRefreshLayout){
         this.movies = movies;
         this.rowLayout = rowLayout;
         this.context = context;
+        this.swipeRefreshLayout = swipeRefreshLayout;
     }
 
     @Override
@@ -95,10 +101,30 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
                 .placeholder(R.mipmap.ic_launcher)
                 .into(holder.imageView);
         Log.i(TAG, "Url of Image: " + image_url);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refresh();
+            }
+        });
     }
 
     @Override
     public int getItemCount(){
         return movies.size();
+    }
+
+    // When swiped up to refresh it loads a random item from the movies list
+    private void refresh(){
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+               movies.add(0, movies.get(new Random().nextInt(movies.size())));
+               MoviesAdapter.this.notifyDataSetChanged();
+               swipeRefreshLayout.setRefreshing(false);
+            }
+        }, 3000);
     }
 }
